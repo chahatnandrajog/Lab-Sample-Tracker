@@ -1,5 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
+from fastapi import UploadFile, File
+import pandas as pd
 
 from app.database import Base, engine, SessionLocal
 from app import schemas, crud, models
@@ -58,3 +60,42 @@ def update_status(sample_id: str, new_status: str, db: Session = Depends(get_db)
         raise HTTPException(status_code=404, detail="Sample not found")
 
     return sample
+
+@app.post("/upload-csv/")
+def upload_csv(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
+    
+    df = pd.read_csv(file.file)
+
+    imported = 0
+
+    for _, row in df.iterrows():
+
+        existing_sample = crud.get_sample_by_sample_id(
+            db,
+            row["sample_id"]
+        )
+
+        if existing_sample:
+            continue
+
+        sample = schemas.SampleCreate(
+            sample_id=row["sample_id"],
+            sample_type=row["sample_type"],
+            collection_date=row["collection_date"],
+            status=row["status"],
+            storage_location=row["storage_location"],
+            owner=row["owner"],
+            temperature=row["temperature"],
+            notes=row["notes"]
+        )
+
+        crud.create_sample(db, sample)
+
+        imported += 1
+
+    return {
+        "imported_samples": imported
+    }

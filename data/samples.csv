@@ -1,0 +1,4 @@
+sample_id,sample_type,collection_date,status,storage_location,owner,temperature,notes
+S002,Tissue,2026-06-02,Received,Freezer B,Dr. Kim,-20,Imported sample
+S003,Serum,2026-06-03,Testing,Lab Bench 1,Dr. Smith,22,Imported sample
+S004,Plasma,2026-06-04,Archived,Freezer C,Dr. Lee,-80,Imported sample
