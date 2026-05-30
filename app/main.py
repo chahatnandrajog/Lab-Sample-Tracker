@@ -61,17 +61,64 @@ def update_status(sample_id: str, new_status: str, db: Session = Depends(get_db)
 
     return sample
 
+
 @app.post("/upload-csv/")
 def upload_csv(
     file: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
-    
     df = pd.read_csv(file.file)
 
-    imported = 0
+    required_columns = [
+        "sample_id",
+        "sample_type",
+        "collection_date",
+        "status",
+        "storage_location",
+        "owner",
+        "temperature",
+        "notes"
+    ]
 
-    for _, row in df.iterrows():
+    errors = []
+    imported = 0
+    duplicates_skipped = 0
+
+    for column in required_columns:
+        if column not in df.columns:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Missing required column: {column}"
+            )
+
+    for index, row in df.iterrows():
+        row_number = index + 2
+
+        row_has_error = False
+
+        for column in required_columns:
+            if pd.isna(row[column]) or str(row[column]).strip() == "":
+                errors.append(
+                    f"Row {row_number}: missing value for {column}"
+                )
+                row_has_error = True
+
+        if row_has_error:
+            continue
+
+        try:
+            temperature = float(row["temperature"])
+        except (ValueError, TypeError):
+            errors.append(
+                f"Row {row_number}: temperature must be a number"
+            )
+            continue
+
+        if temperature < -200 or temperature > 100:
+            errors.append(
+                f"Row {row_number}: temperature {temperature} is outside valid range"
+            )
+            continue
 
         existing_sample = crud.get_sample_by_sample_id(
             db,
@@ -79,6 +126,10 @@ def upload_csv(
         )
 
         if existing_sample:
+            duplicates_skipped += 1
+            errors.append(
+                f"Row {row_number}: duplicate sample_id {row['sample_id']}"
+            )
             continue
 
         sample = schemas.SampleCreate(
@@ -88,14 +139,15 @@ def upload_csv(
             status=row["status"],
             storage_location=row["storage_location"],
             owner=row["owner"],
-            temperature=row["temperature"],
+            temperature=temperature,
             notes=row["notes"]
         )
 
         crud.create_sample(db, sample)
-
         imported += 1
 
     return {
-        "imported_samples": imported
+        "imported_samples": imported,
+        "duplicates_skipped": duplicates_skipped,
+        "errors": errors
     }

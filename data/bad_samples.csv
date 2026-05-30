@@ -1,0 +1,6 @@
+sample_id,sample_type,collection_date,status,storage_location,owner,temperature,notes
+S005,Blood,2026-06-05,Received,Freezer A,Dr. Patel,-80,Valid sample
+S006,Tissue,2026-06-06,Testing,Lab Bench 2,Dr. Kim,500,Invalid temperature
+S001,Serum,2026-06-07,Archived,Freezer B,Dr. Smith,-20,Duplicate sample
+S007,Plasma,2026-06-08,Received,Freezer C,Dr. Lee,not_a_number,Bad temperature
+S008,Blood,,Testing,Freezer A,Dr. Patel,-80,Missing collection date
