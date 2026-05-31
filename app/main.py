@@ -9,6 +9,8 @@ from app import schemas, crud, models
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
+from app.ai_service import generate_sample_summary
+
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Lab Sample Tracking System")
@@ -157,3 +159,27 @@ def upload_csv(
 @app.get("/dashboard/summary")
 def dashboard_summary(db: Session = Depends(get_db)):
     return crud.get_dashboard_summary(db)
+
+@app.get("/samples/{sample_id}/ai-summary")
+def ai_summary(
+    sample_id: str,
+    db: Session = Depends(get_db)
+):
+
+    sample = crud.get_sample_by_sample_id(
+        db,
+        sample_id
+    )
+
+    if sample is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Sample not found"
+        )
+
+    summary = generate_sample_summary(sample)
+
+    return {
+        "sample_id": sample_id,
+        "ai_summary": summary
+    }
