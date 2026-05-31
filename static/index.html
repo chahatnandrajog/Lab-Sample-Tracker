@@ -6,10 +6,43 @@
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <div class="container">
+    <div class="hover-zone">
+        <div class="menu-icon">☰</div>
+
+        <aside class="sidebar">
+            <h2>Controls</h2>
+
+            <label>Search</label>
+            <input id="search-input" type="text" placeholder="Search sample ID, type, owner...">
+
+            <label>Status Filter</label>
+            <select id="status-filter">
+                <option value="">All statuses</option>
+            </select>
+
+            <label>Sort By</label>
+            <select id="sort-select">
+                <option value="">Default</option>
+                <option value="sample_id">Sample ID</option>
+                <option value="sample_type">Sample Type</option>
+                <option value="status">Status</option>
+                <option value="owner">Owner</option>
+                <option value="temperature">Temperature</option>
+            </select>
+
+            <button onclick="applyControls()">Apply</button>
+            <button class="secondary" onclick="resetControls()">Reset</button>
+        </aside>
+    </div>
+
+    <main class="container">
         <header>
-            <h1>Lab Sample Tracking System</h1>
-            <p>Track samples, monitor status, and review lab workflow metrics.</p>
+            <div>
+                <h1>Lab Sample Tracking System</h1>
+                <p>Track samples, monitor status, and review lab workflow metrics.</p>
+            </div>
+
+            <button onclick="openModal()">+ Add Sample</button>
         </header>
 
         <section class="dashboard">
@@ -25,9 +58,10 @@
         </section>
 
         <section class="samples-section">
-            <h2>Samples</h2>
-
-            <button onclick="loadSamples()">Refresh Samples</button>
+            <div class="section-header">
+                <h2>Samples</h2>
+                <button class="secondary" onclick="loadSamples()">Refresh</button>
+            </div>
 
             <table>
                 <thead>
@@ -43,6 +77,30 @@
                 <tbody id="samples-table"></tbody>
             </table>
         </section>
+    </main>
+
+    <div id="modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Sample</h2>
+                <button class="icon-button" onclick="closeModal()">×</button>
+            </div>
+
+            <form id="sample-form">
+                <input name="sample_id" placeholder="Sample ID" required>
+                <input name="sample_type" placeholder="Sample Type" required>
+                <input name="collection_date" placeholder="Collection Date YYYY-MM-DD" required>
+                <input name="status" placeholder="Status" required>
+                <input name="storage_location" placeholder="Storage Location" required>
+                <input name="owner" placeholder="Owner" required>
+                <input name="temperature" type="number" step="0.1" placeholder="Temperature" required>
+                <textarea name="notes" placeholder="Notes"></textarea>
+
+                <button type="submit">Save Sample</button>
+            </form>
+
+            <p id="form-message"></p>
+        </div>
     </div>
 
     <script src="/static/script.js"></script>
