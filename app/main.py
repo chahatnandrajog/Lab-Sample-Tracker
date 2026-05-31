@@ -6,9 +6,13 @@ import pandas as pd
 from app.database import Base, engine, SessionLocal
 from app import schemas, crud, models
 
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Lab Sample Tracking System")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 def get_db():
@@ -22,9 +26,7 @@ def get_db():
 
 @app.get("/")
 def root():
-    return {
-        "message": "Lab Sample Tracking System"
-    }
+    return FileResponse("static/index.html")
 
 
 @app.post("/samples/", response_model=schemas.SampleResponse)

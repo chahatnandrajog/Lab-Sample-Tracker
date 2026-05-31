@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab Sample Tracking System</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Lab Sample Tracking System</h1>
+            <p>Track samples, monitor status, and review lab workflow metrics.</p>
+        </header>
+
+        <section class="dashboard">
+            <div class="card">
+                <h2>Total Samples</h2>
+                <p id="total-samples">Loading...</p>
+            </div>
+
+            <div class="card">
+                <h2>Status Summary</h2>
+                <ul id="status-summary"></ul>
+            </div>
+        </section>
+
+        <section class="samples-section">
+            <h2>Samples</h2>
+
+            <button onclick="loadSamples()">Refresh Samples</button>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sample ID</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Location</th>
+                        <th>Owner</th>
+                        <th>Temperature</th>
+                    </tr>
+                </thead>
+                <tbody id="samples-table"></tbody>
+            </table>
+        </section>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
