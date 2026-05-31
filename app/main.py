@@ -151,3 +151,7 @@ def upload_csv(
         "duplicates_skipped": duplicates_skipped,
         "errors": errors
     }
+
+@app.get("/dashboard/summary")
+def dashboard_summary(db: Session = Depends(get_db)):
+    return crud.get_dashboard_summary(db)

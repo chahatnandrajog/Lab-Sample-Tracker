@@ -33,3 +33,23 @@ def update_sample_status(db: Session, sample_id: str, new_status: str):
     db.refresh(sample)
 
     return sample
+
+def get_dashboard_summary(db: Session):
+    samples = db.query(models.Sample).all()
+
+    summary = {}
+
+    for sample in samples:
+        status = sample.status
+
+        if status not in summary:
+            summary[status] = 0
+
+        summary[status] += 1
+
+    return {
+        "total_samples": len(samples),
+        "status_counts": summary
+    }
+
+
