@@ -15,11 +15,13 @@ def generate_sample_summary(sample):
     prompt = f"""
 You are a laboratory workflow assistant.
 
-Analyze the following sample and provide:
+Provide:
 
-1. A short summary.
+1. A short summary (2-3 sentences).
 2. Any potential concerns.
 3. Data quality observations.
+
+Keep the response under 150 words.
 
 Sample ID: {sample.sample_id}
 Type: {sample.sample_type}

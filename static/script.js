@@ -45,6 +45,11 @@ function renderSamples(samples) {
             <td>${sample.storage_location}</td>
             <td>${sample.owner}</td>
             <td>${sample.temperature}</td>
+            <td>
+                <button onclick="generateAiSummary('${sample.sample_id}')">
+                    AI Summary
+                </button>
+            </td>
         `;
 
         table.appendChild(row);
@@ -101,6 +106,28 @@ function closeModal() {
     document.getElementById("form-message").textContent = "";
 }
 
+async function generateAiSummary(sampleId) {
+    const modal = document.getElementById("ai-modal");
+    const summaryText = document.getElementById("ai-summary-text");
+
+    modal.classList.remove("hidden");
+    summaryText.textContent = "Generating AI summary...";
+
+    const response = await fetch(`/samples/${sampleId}/ai-summary`);
+
+    if (!response.ok) {
+        summaryText.textContent = "Failed to generate AI summary.";
+        return;
+    }
+
+    const data = await response.json();
+    summaryText.textContent = data.ai_summary;
+}
+
+function closeAiModal() {
+    document.getElementById("ai-modal").classList.add("hidden");
+}
+
 document.getElementById("sample-form").addEventListener("submit", async function(event) {
     event.preventDefault();
 
@@ -135,6 +162,16 @@ document.getElementById("sample-form").addEventListener("submit", async function
         const error = await response.json();
         message.textContent = error.detail || "Failed to add sample.";
     }
+});
+
+document.addEventListener("keydown", function(event) {
+
+    if (event.key === "Escape") {
+
+        closeAiModal();
+
+    }
+
 });
 
 loadSamples();
