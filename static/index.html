@@ -24,6 +24,7 @@
             <select id="sort-select">
                 <option value="">Default</option>
                 <option value="sample_id">Sample ID</option>
+                <option value="collection_date">Collection Date</option>
                 <option value="sample_type">Sample Type</option>
                 <option value="status">Status</option>
                 <option value="owner">Owner</option>
@@ -57,6 +58,16 @@
             </div>
         </section>
 
+        <section class="upload-section">
+            <h2>Upload CSV</h2>
+            <p>Import sample records and automatically validate duplicate IDs, missing values, and invalid temperatures.</p>
+
+            <input id="csv-file" type="file" accept=".csv">
+            <button onclick="uploadCsv()">Upload CSV</button>
+
+            <div id="upload-result"></div>
+        </section>
+
         <section class="samples-section">
             <div class="section-header">
                 <h2>Samples</h2>
@@ -67,8 +78,10 @@
                 <thead>
                     <tr>
                         <th>Sample ID</th>
+                        <th>Collection Date</th>
                         <th>Type</th>
                         <th>Status</th>
+                        <th>Validation</th>
                         <th>Location</th>
                         <th>Owner</th>
                         <th>Temperature</th>

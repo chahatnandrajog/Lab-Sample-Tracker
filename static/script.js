@@ -31,6 +31,23 @@ async function loadSamples() {
     await loadDashboard();
 }
 
+function getValidationIcon(sample) {
+    if (
+        !sample.sample_id ||
+        !sample.sample_type ||
+        !sample.collection_date ||
+        !sample.status ||
+        !sample.storage_location ||
+        !sample.owner ||
+        sample.temperature < -200 ||
+        sample.temperature > 100
+    ) {
+        return `<span class="validation-bad">✕ Issue</span>`;
+    }
+
+    return `<span class="validation-good">✓ Valid</span>`;
+}
+
 function renderSamples(samples) {
     const table = document.getElementById("samples-table");
     table.innerHTML = "";
@@ -40,8 +57,10 @@ function renderSamples(samples) {
 
         row.innerHTML = `
             <td>${sample.sample_id}</td>
+            <td>${sample.collection_date}</td>
             <td>${sample.sample_type}</td>
             <td>${sample.status}</td>
+            <td>${getValidationIcon(sample)}</td>
             <td>${sample.storage_location}</td>
             <td>${sample.owner}</td>
             <td>${sample.temperature}</td>
@@ -89,6 +108,7 @@ function applyControls() {
     renderSamples(filtered);
 }
 
+
 function resetControls() {
     document.getElementById("search-input").value = "";
     document.getElementById("status-filter").value = "";
@@ -122,6 +142,50 @@ async function generateAiSummary(sampleId) {
 
     const data = await response.json();
     summaryText.textContent = data.ai_summary;
+}
+
+async function uploadCsv() {
+    const fileInput = document.getElementById("csv-file");
+    const resultDiv = document.getElementById("upload-result");
+
+    if (!fileInput.files.length) {
+        resultDiv.innerHTML = `<p class="upload-error">Please select a CSV file first.</p>`;
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+
+    resultDiv.innerHTML = "Uploading and validating CSV...";
+
+    const response = await fetch("/upload-csv/", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        resultDiv.innerHTML = `<p class="upload-error">${data.detail || "Upload failed."}</p>`;
+        return;
+    }
+
+    let html = `
+        <p class="upload-success">Imported samples: ${data.imported_samples}</p>
+        <p>Duplicates skipped: ${data.duplicates_skipped}</p>
+    `;
+
+    if (data.errors.length > 0) {
+        html += `<h4>Validation Results</h4><ul>`;
+        data.errors.forEach(error => {
+            html += `<li class="upload-error">${error}</li>`;
+        });
+        html += `</ul>`;
+    }
+
+    resultDiv.innerHTML = html;
+
+    await loadSamples();
 }
 
 function closeAiModal() {

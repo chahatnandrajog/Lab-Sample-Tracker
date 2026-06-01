@@ -15,16 +15,23 @@ def generate_sample_summary(sample):
     prompt = f"""
 You are a laboratory workflow assistant.
 
-Provide:
+Review this lab sample and provide:
 
-1. A short summary (2-3 sentences).
-2. Any potential concerns.
-3. Data quality observations.
+1. Summary
+2. Data Validation Review
+3. Potential Risks
+4. Recommended Next Step
 
 Keep the response under 150 words.
 
+Consider these validation rules:
+- Temperature should be between -200 and 100.
+- Required fields should not be missing.
+- Storage and status should make sense for the sample.
+
 Sample ID: {sample.sample_id}
 Type: {sample.sample_type}
+Collection Date: {sample.collection_date}
 Status: {sample.status}
 Storage Location: {sample.storage_location}
 Owner: {sample.owner}

@@ -63,6 +63,27 @@ header p {
     align-items: center;
 }
 
+.upload-section {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 32px;
+}
+
+#upload-result {
+    margin-top: 16px;
+    font-size: 14px;
+}
+
+.upload-error {
+    color: #b91c1c;
+}
+
+.upload-success {
+    color: #15803d;
+}
+
 button {
     padding: 10px 16px;
     border: none;
@@ -100,6 +121,16 @@ td {
 
 th {
     background: #f9fafb;
+}
+
+.validation-good {
+    color: #15803d;
+    font-weight: bold;
+}
+
+.validation-bad {
+    color: #b91c1c;
+    font-weight: bold;
 }
 
 .hover-zone {
